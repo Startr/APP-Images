@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://startr.style/style.css">
+        <style>
+            .thumbnail-stack {
+                position: relative;
+                display: inline-block;
+                width: 150px;
+                height: 150px;
+                margin: 20px;
+            }
+
+            .thumbnail-stack img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+
+            .thumbnail-stack img:nth-child(1) {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            .thumbnail-stack img:nth-child(2) {
+                transform: translate(10px, 10px) rotate(-5deg);
+            }
+
+            .thumbnail-stack img:nth-child(3) {
+                transform: translate(20px, 20px) rotate(5deg);
+            }
+        </style>
+        <title>Image Downloader</title>
+        <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.querySelector('form');
+                const downloadButton = document.querySelector('button[type="submit"]');
+
+                form.addEventListener('submit', function (event) {
+                    downloadButton.disabled = true;
+                    downloadButton.textContent = 'Downloading...';
+                });
+
+                window.addEventListener('pageshow', function (event) {
+                    if (event.persisted) {
+                        downloadButton.disabled = false;
+                        downloadButton.textContent = 'Download Images';
+                    }
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Image Downloader</h1>
+            <form method="POST" hx-post="/" hx-target="#progress" hx-swap="innerHTML">
+                <div class="form-group">
+                    <label for="word">Enter a word:</label>
+                    <input type="text" id="word" name="word" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Download Images</button>
+            </form>
+            <div id="progress"></div>
+            <h2>Prior Searches</h2>
+            <div class="grid" style="--d:flex; --fw:wrap">
+                {% for search in prior_searches %}
+                <div class="card" style="--d:flex; --fd:column">
+                    <h3 style="--ta:center">{{ search.word }}</h3>
+                    {% if search.thumbnail_urls %}
+                    <div class="thumbnail-stack">
+                        {% for url in search.thumbnail_urls[:3] %}
+                        <img src="{{ url }}" alt="{{ search.word }}">
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>No thumbnail available</p>
+                    {% endif %}
+                    <a href="{{ url_for('download_file', filename=search.zip_path) }}"
+                        class="btn btn-secondary">Download ZIP</a>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+
+</html>
