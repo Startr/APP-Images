@@ -8,6 +8,8 @@ install = "*"
 flask = "*"
 pillow = "*"
 unsplash-get = {git = "git+https://github.com/streanger/unsplash-get.git"}
+pytest = "*"
+pytest-mock = "*"
 
 [dev-packages]
 
