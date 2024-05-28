@@ -29,6 +29,8 @@
                     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                     /* thin white border around the images */
                     border: 3px solid white;
+                    filter: brightness(80%)
+                    blur(1px);;
 
                     &:nth-child(1) {
                         transform: translate(0, 0) rotate(-5deg);
@@ -48,6 +50,7 @@
 
                     /* Zoom and rotate */
                     img {
+                        filter: none;
                         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
                         &:nth-child(1) {
@@ -95,9 +98,9 @@
     <body>
         <div class="container">
             <h1>Image Downloader</h1>
-            <form method="POST" hx-post="/" hx-target="#progress" hx-swap="innerHTML">
+            <form method="POST" action="/">
                 <div class="form-group">
-                    <label for="word">Enter a word:</label>
+                    <label for="word">Search and create a set for any use:</label>
                     <input type="text" id="word" name="word" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Download Images</button>
