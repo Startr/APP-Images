@@ -11,8 +11,8 @@
         <h1>Image Set: {{ word }}</h1>
         <div class="gallery">
             {% for image_url in image_urls %}
-            <div class="thumbnail">
-                <img src="{{ image_url }}" alt="Image thumbnail">
+            <div class="thumbnail" style="--ta:right; --mb:0.6em">
+                <img src="{{ image_url }}" alt="Image thumbnail" style="--br:0.6rem; --shadow:8">
                 <a href="{{ url_for('download_image', word=word, filename=image_url.split('/')[-1]) }}" class="btn btn-primary">Download</a>
             </div>
             {% endfor %}
