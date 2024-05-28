@@ -104,26 +104,38 @@
             </form>
             <div id="progress"></div>
             <h2>Prior Searches</h2>
+
             <div style="--d:flex; --fw:wrap; --jc:center; gap: 2em;">
                 {% for search in prior_searches %}
                 <div class="card" style="--d:flex; --fw:wrap">
                     <div class="card-body" style="--d:flex; --fd:column">
                         <h3 style="--ta:center; --tt:capitalize; --m: 0 0 -1rem 0">{{ search.word }}</h3>
                         {% if search.thumbnail_urls %}
-                        <a href="{{ url_for('download_file', filename=search.zip_path) }}" class="btn btn-secondary">
+
+                        <a href="{{ url_for('image_set', word=search.word) }}" class="btn btn-primary"
+                            style="margin-top: 1rem;">
                             <div class="thumbnail-stack">
                                 {% for url in search.thumbnail_urls[:3] %}
                                 <img src="{{ url }}" alt="{{ search.word }}" style="--br:1rem">
                                 {% endfor %}
                             </div>
-                            {% else %}
-                            <p>No thumbnail available</p>
-                            {% endif %}<br>
-                            Download ZIP
                         </a>
+                        <div style="--d:flex; --jc: center; --fd:row; gap: 1em">
+                            <a href="{{ url_for('image_set', word=search.word) }}" class="btn btn-primary" style="">
+                                👁️‍🗨️
+                            </a>
+                            <a href="{{ url_for('download_file', filename=search.zip_path) }}"
+                                class="btn btn-secondary">
+                                💾
+                            </a>
+                        </div>
+                        {% else %}
+                        <p>No thumbnail available</p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
+
             </div>
         </div>
     </body>

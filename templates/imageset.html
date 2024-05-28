@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://startr.style/style.css">
+    <title>Image Set</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Set: {{ word }}</h1>
+        <div class="gallery">
+            {% for image_url in image_urls %}
+            <div class="thumbnail">
+                <img src="{{ image_url }}" alt="Image thumbnail">
+                <a href="{{ url_for('download_image', word=word, filename=image_url.split('/')[-1]) }}" class="btn btn-primary">Download</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
