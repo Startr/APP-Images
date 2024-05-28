@@ -107,7 +107,7 @@
                 <button type="submit" class="btn btn-primary">Download Images</button>
             </form>
             <div id="progress"></div>
-            <h2>Prior Searches</h2>
+            <h2 style="--ta:center; --mb:2rem">Image Sets</h2>
 
             <div style="--d:flex; --fw:wrap; --jc:center; gap: 2em;">
                 {% for search in prior_searches %}
@@ -120,7 +120,7 @@
                             style="margin-top: 1rem;">
                             <div class="thumbnail-stack">
                                 {% for url in search.thumbnail_urls[:3] %}
-                                <img src="{{ url }}" alt="{{ search.word }}" style="--br:1rem">
+                                <img src="{{ url }}" alt="{{ search.word }}" style="--br:0.6rem">
                                 {% endfor %}
                             </div>
                         </a>
