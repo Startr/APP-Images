@@ -46,7 +46,15 @@ def progress(word):
     directory = Path('static/downloads') / word / 'thumbnails'
     thumbnails = list(directory.glob('*.webp'))
     thumbnail_urls = [url_for('static', filename=f'downloads/{word}/thumbnails/{thumbnail.name}') for thumbnail in thumbnails]
-    return jsonify(thumbnail_urls)
+    # generate html of current thumbnails
+    html = '<h2>Downloading images...</h2>'
+    for url in thumbnail_urls:
+        html += f'<img src="{url}" alt="thumbnail">'
+        # add a line break after every 4 thumbnails
+        if thumbnail_urls.index(url) % 4 == 3:
+            html += '<br>'
+    # Return the html
+    return html
 
 @app.route('/imageset/<word>', methods=['GET'])
 def image_set(word):
