@@ -18,8 +18,6 @@
                 height: 150px;
                 margin: 20px;
 
-
-
                 img {
                     position: absolute;
                     top: 0;
@@ -29,8 +27,11 @@
                     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                     /* thin white border around the images */
                     border: 3px solid white;
-                    filter: brightness(80%)
-                    blur(1px);;
+                    filter: brightness(88%)
+                    grayscale(25%)
+                    blur(0.5px)
+                    contrast(90%)
+                    ;
 
                     &:nth-child(1) {
                         transform: translate(0, 0) rotate(-5deg);
@@ -50,7 +51,7 @@
 
                     /* Zoom and rotate */
                     img {
-                        filter: none;
+                        filter: brightness(110%);
                         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
                         &:nth-child(1) {
@@ -106,7 +107,7 @@
                 <button type="submit" class="btn btn-primary">Download Images</button>
             </form>
             <div id="progress"></div>
-            <h2>Prior Searches</h2>
+            <h2 style="--ta:center; --mb:2rem">Image Sets</h2>
 
             <div style="--d:flex; --fw:wrap; --jc:center; gap: 2em;">
                 {% for search in prior_searches %}
@@ -119,7 +120,7 @@
                             style="margin-top: 1rem;">
                             <div class="thumbnail-stack">
                                 {% for url in search.thumbnail_urls[:3] %}
-                                <img src="{{ url }}" alt="{{ search.word }}" style="--br:1rem">
+                                <img src="{{ url }}" alt="{{ search.word }}" style="--br:0.6rem">
                                 {% endfor %}
                             </div>
                         </a>

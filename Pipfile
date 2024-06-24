@@ -13,6 +13,9 @@ pytest-mock = "*"
 werkzeug = "*"
 click = "*"
 flask-caching = "*"
+boto3 = "*"
+b2sdk = "*"
+flask-admin = "*"
 
 [dev-packages]
 
