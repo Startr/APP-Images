@@ -35,10 +35,25 @@ CACHE_PATH = 'static/cache'
 app.config['CACHE_TYPE'] = 'SimpleCache'
 cache = Cache(app)
 
-def get_random_image(folder):
-    folder_path = os.path.join(LOCAL_STORAGE_PATH, folder)
-    images = [img for img in os.listdir(folder_path) if img.endswith(('jpg', 'jpeg', 'png', 'webp'))]
-    return os.path.join(folder_path, random.choice(images))
+def get_random_image(folder=None, max_retries=10):
+    max_retries = int(max_retries)  # Ensure max_retries is an integer
+    attempts = 0
+
+    while attempts < max_retries:
+        if not folder:
+            folder = random.choice(os.listdir(LOCAL_STORAGE_PATH))
+        folder_path = os.path.join(LOCAL_STORAGE_PATH, folder)
+
+        if os.path.isdir(folder_path):
+            images = [img for img in os.listdir(folder_path) if img.lower().endswith(('jpg', 'jpeg', 'png', 'webp'))]
+            if images:
+                return os.path.join(folder_path, random.choice(images))
+
+        folder = None  # Reset folder to ensure next iteration selects a new random folder
+        attempts += 1
+
+    raise FileNotFoundError("No images found after multiple attempts")
+
 
 def resize_image(image_path, width, height):
     cache_key = f"{image_path}_{width}_{height}"
@@ -48,11 +63,40 @@ def resize_image(image_path, width, height):
         return cached_image
     
     image = Image.open(image_path)
-    resized_image = image.resize((width, height), Image.LANCZOS)
+    original_width, original_height = image.size
+    original_aspect_ratio = original_width / original_height
+    target_aspect_ratio = width / height
+
+    # Determine new dimensions
+    if original_aspect_ratio > target_aspect_ratio:
+        # Crop the width (left and right)
+        new_height = height
+        new_width = int(height * original_aspect_ratio)
+    else:
+        # Crop the height (top and bottom)
+        new_width = width
+        new_height = int(width / original_aspect_ratio)
+
+    # Resize while maintaining aspect ratio
+    image = image.resize((new_width, new_height), Image.LANCZOS)
+
+    # Calculate cropping box
+    left = (new_width - width) / 2
+    top = (new_height - height) / 2
+    right = (new_width + width) / 2
+    bottom = (new_height + height) / 2
+
+    # Crop the image
+    image = image.crop((left, top, right, bottom))
+
+    # Save the resized and cropped image
     cached_image_path = os.path.join(CACHE_PATH, f"{os.path.basename(image_path).split('.')[0]}_{width}x{height}.jpg")
-    resized_image.save(cached_image_path)
+    image.save(cached_image_path)
     cache.set(cache_key, cached_image_path)
+    
     return cached_image_path
+
+
 
 def upload_file_to_cloud(file_path, file_name):
     if CLOUD_STORAGE_PROVIDER == 's3':
@@ -93,26 +137,40 @@ def index():
     prior_searches = get_prior_searches()
     return render_template('index.html', prior_searches=prior_searches)
 
-@app.route('/random')
-def random_image():
-    folder = random.choice(os.listdir(LOCAL_STORAGE_PATH))
-    image_path = get_random_image(folder)
-    return send_file(image_path)
-
-@app.route('/<int:width>x<int:height>')
-def image_with_dimensions(width, height):
-    folder = random.choice(os.listdir(LOCAL_STORAGE_PATH))
-    image_path = get_random_image(folder)
-    resized_image_path = resize_image(image_path, width, height)
-    return send_file(resized_image_path)
-
-@app.route('/random/<folder>')
-def random_image_from_folder(folder):
-    if folder not in os.listdir(LOCAL_STORAGE_PATH):
-        return "Folder not found", 404
+@app.route('/random', defaults={'folder': None, 'direct': False})
+@app.route('/random_', defaults={'folder': None, 'direct': True})
+@app.route('/random/<folder>', defaults={'direct': False})
+@app.route('/random/<folder>_', defaults={'direct': True})
+def random_image(folder, direct):
+    if folder:
+        if folder not in os.listdir(LOCAL_STORAGE_PATH):
+            return "Folder not found", 404
+    else:
+        folder = random.choice(os.listdir(LOCAL_STORAGE_PATH))
     
     image_path = get_random_image(folder)
-    return send_file(image_path)
+    if direct:
+        return send_file(image_path)
+    relative_path = os.path.relpath(image_path, 'static')
+    return redirect(url_for('static', filename=relative_path))
+
+@app.route('/<int:width>x<int:height>', defaults={'folder': None, 'direct': False})
+@app.route('/<int:width>x<int:height>_', defaults={'folder': None, 'direct': True})
+@app.route('/<int:width>x<int:height>/<folder>', defaults={'direct': False})
+@app.route('/<int:width>x<int:height>/<folder>_', defaults={'direct': True})
+def image_with_dimensions(width, height, folder, direct):
+    if folder:
+        if folder not in os.listdir(LOCAL_STORAGE_PATH):
+            return "Folder not found", 404
+    else:
+        folder = random.choice(os.listdir(LOCAL_STORAGE_PATH))
+    
+    image_path = get_random_image(folder)
+    resized_image_path = resize_image(image_path, width, height)
+    if direct:
+        return send_file(resized_image_path)
+    relative_path = os.path.relpath(resized_image_path, 'static')
+    return redirect(url_for('static', filename=relative_path))
 
 @app.route('/progress/<word>', methods=['GET'])
 def progress(word):
