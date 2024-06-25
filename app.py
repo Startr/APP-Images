@@ -48,7 +48,7 @@ def resize_image(image_path, width, height):
         return cached_image
     
     image = Image.open(image_path)
-    resized_image = image.resize((width, height), Image.ANTIALIAS)
+    resized_image = image.resize((width, height), Image.LANCZOS)
     cached_image_path = os.path.join(CACHE_PATH, f"{os.path.basename(image_path).split('.')[0]}_{width}x{height}.jpg")
     resized_image.save(cached_image_path)
     cache.set(cache_key, cached_image_path)
@@ -106,7 +106,7 @@ def image_with_dimensions(width, height):
     resized_image_path = resize_image(image_path, width, height)
     return send_file(resized_image_path)
 
-@app.route('/folder/<folder>')
+@app.route('/random/<folder>')
 def random_image_from_folder(folder):
     if folder not in os.listdir(LOCAL_STORAGE_PATH):
         return "Folder not found", 404
