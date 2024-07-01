@@ -2,15 +2,15 @@ from flask import Flask, render_template, request, send_file, url_for, jsonify, 
 from flask_caching import Cache
 from PIL import Image
 import os
-from pathlib import Path
 from unsplash_get import search, save_img
-import logging
 import random
 import click
 import boto3
 import b2sdk.v1 as b2
 from botocore.exceptions import NoCredentialsError
 from flask_admin import Admin, BaseView, expose
+import logging
+from pathlib import Path
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -183,13 +183,18 @@ def progress(word):
 @app.route('/imageset/<word>', methods=['GET'])
 def image_set(word):
     """Display images in a set and provide download links."""
-    directory = Path(LOCAL_STORAGE_PATH) / word
+    normalized_word = word.lower()
+    if word != normalized_word:
+        return redirect(url_for('image_set', word=normalized_word), code=301)
+    
+    directory = Path(LOCAL_STORAGE_PATH) / normalized_word
     if not directory.exists():
         abort(404)
     
     images = list(directory.glob('*.jpg'))
-    image_urls = [url_for('static', filename=f'downloads/{word}/{image.name}') for image in images]
-    return render_template('imageset.html', word=word, image_urls=image_urls)
+    image_urls = [url_for('static', filename=f'downloads/{normalized_word}/{image.name}') for image in images]
+    return render_template('imageset.html', word=normalized_word, image_urls=image_urls)
+
 
 @app.route('/download_image/<word>/<filename>', methods=['GET'])
 def download_image(word, filename):
@@ -248,10 +253,11 @@ def download_file(filename):
 def download_images(word):
     """Download images based on the search word and save them to a directory."""
     urls = search(word)
-    directory = Path(LOCAL_STORAGE_PATH) / word
+    normalized_word = word.lower()  # Normalize the word to lowercase
+    directory = Path(LOCAL_STORAGE_PATH) / normalized_word
     directory.mkdir(exist_ok=True, parents=True)
     for index, url in enumerate(urls, start=1):
-        path = str(directory / f'{word}_{index:03}.jpg')
+        path = str(directory / f'{normalized_word}_{index:03}.jpg')
         save_img(url, path)
         logging.info(f"Saved image: {path}")
         create_thumbnail_for_image(path)
