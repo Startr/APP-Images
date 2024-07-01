@@ -74,7 +74,7 @@
                 }
             }
         </style>
-        <title>Image Downloader</title>
+        <title>Image Startr</title>
         <script src="https://unpkg.com/htmx.org@1.6.1"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -98,7 +98,7 @@
 
     <body>
         <div class="container">
-            <h1>Image Downloader</h1>
+            <h1>Image Startr</h1>
             <form method="POST" action="/">
                 <div class="form-group">
                     <label for="word">Search and create a set for any use:</label>
@@ -111,9 +111,9 @@
 
             <div style="--d:flex; --fw:wrap; --jc:center; gap: 2em;">
                 {% for search in prior_searches %}
-                <div class="card" style="--d:flex; --fw:wrap">
+                <div class="card" style="--d:flex; --fw:wrap; --ta: center;     --maxw-md: 23%;">
                     <div class="card-body" style="--d:flex; --fd:column">
-                        <h3 style="--ta:center; --tt:capitalize; --m: 0 0 -1rem 0">{{ search.word }}</h3>
+                        <h3 style="--ta:center; --tt:capitalize; --m: 0 0 -1rem 0; --size:18pt">{{ search.word }}</h3>
                         {% if search.thumbnail_urls %}
 
                         <a href="{{ url_for('image_set', word=search.word) }}" class="btn btn-primary"
