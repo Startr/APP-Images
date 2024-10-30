@@ -4,10 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-install = "*"
 flask = "*"
 pillow = "*"
-unsplash-get = {git = "git+https://github.com/streanger/unsplash-get.git"}
 pytest = "*"
 pytest-mock = "*"
 werkzeug = "*"
@@ -16,6 +14,7 @@ flask-caching = "*"
 boto3 = "*"
 b2sdk = "*"
 flask-admin = "*"
+unsplash-get = {git = "git+https://github.com/streanger/unsplash-get.git"}
 
 [dev-packages]
 
