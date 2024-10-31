@@ -4,6 +4,7 @@ else
     DOCKER_COMPOSE := docker compose
 endif
 
+SHELL := /bin/bash
 
 help: 
 	@echo "================================================"
@@ -25,3 +26,9 @@ help:
 
 it_run:
 	pipenv run flask run
+
+it_startr:
+	@bash <(curl -sL startr.sh) run
+
+it_deploy:
+	@caprover deploy --default
