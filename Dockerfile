@@ -19,6 +19,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install rclone dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates && \
+    apt-get install -y cron bash-completion curl busybox && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install rclone
+RUN curl https://rclone.org/install.sh | bash
+
 # Install pipenv
 RUN pip install --upgrade pip
 RUN pip install pipenv
@@ -53,6 +64,9 @@ WORKDIR /app
 # Copy the installed virtual environment from the builder stage
 COPY --from=builder /app/.venv /app/.venv
 
+# Copy rclone from the builder stage
+COPY --from=builder /usr/bin/rclone /usr/bin/rclone
+
 # Copy application files
 COPY . /app
 
@@ -63,4 +77,5 @@ EXPOSE 5000
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Command to run the application
-CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
+#CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
+CMD [ "bash", "restore_backup_start.sh", "server" ]

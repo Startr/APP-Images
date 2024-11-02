@@ -8,7 +8,7 @@ SHELL := /bin/bash
 
 help: 
 	@echo "================================================"
-	@echo " Startr Images   by Startr.Cloud   Startr LLC   "
+	@echo "  Startr Images by Startr.Cloud of Startr LLC   "
 	@echo "================================================"
 	@echo ""
 	@echo 'This is the default make command.' 
