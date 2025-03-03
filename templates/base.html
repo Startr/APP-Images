@@ -7,10 +7,15 @@
     <title>{% block title %}Image Startr{% endblock %}</title>
     {% block head %}{% endblock %}
 </head>
-<body>
-    <div class="container" style="--m: auto; --maxw: 80em;">
+<body style="--d: flex; --fd: column; --ai: center; --jc: center; --minh: 100vh;">
+    {% include 'icons.html' %}
+
+    <div class="container" style="--m: auto; --maxw: 80em; --fg:4">
         {% block content %}{% endblock %}
     </div>
+
+    {% include 'footer.html' %}
+
     {% block scripts %}{% endblock %}
 </body>
 </html> 
