@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Jython cache
+.jython_cache/
+
 # C extensions
 *.so
 
