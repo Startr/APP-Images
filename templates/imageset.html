@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://startr.style/style.css">
-    <title>Image Set</title>
-</head>
-<body>
-    <div class="container" style="--m: auto; --maxw: 80em;">
-        <h1><a href="/">Image Startr</a> / imageset / {{ word }}</h1>
-        <div class="gallery">
-            {% for image_url in image_urls %}
-            <div class="thumbnail" style="--ta:center; --mb:0.6em">
-                <a href="{{ url_for('download_image', word=word, filename=image_url.split('/')[-1]) }}" class="btn btn-primary">
-                <img src="{{ image_url }}" alt="Image thumbnail" style="--br:0.6rem; --shadow:8; --maxh:90vh"><br>
-                Download</a>
-            </div>
-            {% endfor %}
-        </div>
+{% extends "base.html" %}
+
+{% block title %}Image Set - {{ word }}{% endblock %}
+
+{% block content %}
+<h1><a href="/">Image Startr</a> / imageset / {{ word }}</h1>
+<div class="gallery">
+    {% for image_url in image_urls %}
+    <div class="thumbnail" style="--ta:center; --mb:0.6em">
+        <a href="{{ url_for('download_image', word=word, filename=image_url.split('/')[-1]) }}" class="btn btn-primary">
+        <img src="{{ image_url }}" alt="Image thumbnail" style="--br:0.6rem; --shadow:8; --maxh:90vh"><br>
+        Download</a>
     </div>
-</body>
-</html>
+    {% endfor %}
+</div>
+{% endblock %}
